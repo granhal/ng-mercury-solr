@@ -1,4 +1,4 @@
-# mercury
+# ng-mercury-solr
 Solr wrapper for Angular
 
 ##Requisites:
