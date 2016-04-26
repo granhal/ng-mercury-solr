@@ -2,12 +2,13 @@
 Solr wrapper for Angular
 
 ##Requisites:
-* Solr 4.7.0 - http://lucene.apache.org/solr/
+* Solr 4.7.0+ - http://lucene.apache.org/solr/
 * Angular 1.0.8+ - https://angularjs.org/
 
 ##How to use:
 * Install apache solr in your server
 * Install angular in your client
+
 ###Inyect dependencies in module
 ```javascript
 var yourApp = angular.module('yourApp', ['mercury']);
@@ -26,7 +27,7 @@ yourApp.controller('searchCtrl', ['Mercury',
 	}
 ]);
 ```
-### In "your code here" inside the method, insert:
+#### In "//your code here" inside the method, insert:
 ```javascript
         Mercury.search({ // in this object, insert your solr query!!
                 'q.op': 'AND',
@@ -52,9 +53,10 @@ yourApp.controller('searchCtrl', ['Mercury',
 is easy! :D
 
 ##TODO:
-    - Parse to Angular 2
-    - Insert PUT and DELETE method for Solr files
-
+* Parse to Angular 2
+* Insert PUT and DELETE method for Solr files
+* Add multiple endpoints to cores
+* Doc man for the directive HTML
 
 ###Licence:
 Open source
