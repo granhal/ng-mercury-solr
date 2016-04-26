@@ -8,12 +8,15 @@ Solr wrapper for Angular
 ##How to use:
 * Install apache solr in your server
 * Install angular in your client
-
+* call mercury.js or mercury.min.js after angular
+```html
+<script type="text/javascript" src="js/mercury.js"></script>
+```
 ###Inyect dependencies in module
 ```javascript
 var yourApp = angular.module('yourApp', ['mercury']);
 ```
-###Set in your config:
+###Set end-point in your config:
 ```javascript
 yourApp.config(function(MercuryProvider) {
     MercuryProvider.setEndpoint('http://url-your-solr/solr/core/');
@@ -29,7 +32,7 @@ yourApp.controller('searchCtrl', ['Mercury',
 ```
 #### In "//your code here" inside the method, insert:
 ```javascript
-        Mercury.search({ // in this object, insert your solr query!!
+        Mercury.search({ // in this object, insert your solr query in keys!! this is example...
                 'q.op': 'AND',
                 rows: $scope.pageSize,
                 start : (($scope.currentPage)? ($scope.currentPage-1) : 0) * $scope.pageSize,
