@@ -10,8 +10,8 @@ Solr wrapper for Angular
 * Install angular in your client
 * call mercury.js or mercury.min.js after angular
 ```html
-<script type="text/javascript" src="./resources/js/angular.min.js"></script>
-<script type="text/javascript" src="js/mercury.js"></script>
+<script type="text/javascript" src="js/angular.min.js"></script>
+<script type="text/javascript" src="js/mercury.min.js"></script>
 ```
 ###Inyect dependencies in module
 ```javascript
