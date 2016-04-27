@@ -1,5 +1,9 @@
 # ng-mercury-solr
 Solr wrapper for Angular
+Mercury is an AngularJS module, that enables simple querying and faceting/filtering of Solr indexes.
+Provides a search service and a companion directive that can be used in any Angularjs project.
+
+Mercury is inspired by Solstice and Restangular - Service for Rest API.
 
 ##Requisites:
 * Solr 4.7.0+ - http://lucene.apache.org/solr/
@@ -33,34 +37,49 @@ yourApp.controller('searchCtrl', ['Mercury',
 ```
 #### In "//your code here" inside the method, insert:
 ```javascript
-        Mercury.search({ // in this object, insert your solr query in keys!! this is example...
-                'q.op': 'AND',
-                rows: $scope.pageSize,
-                start : (($scope.currentPage)? ($scope.currentPage-1) : 0) * $scope.pageSize,
-                fq: 'speStateId:1 OR speStateId:4',
-                fl: '*, score',
-                q: $scope.searchCarrousel ? $scope.searchCarrousel : ($scope.search) ? $scope.search: '*',
-                pt: (UserLocalService.getLocation()) ? UserLocalService.getLocation().lat + "," + UserLocalService.getLocation().lon : ''
-            })
-            .then(function (callback){ // resolve promise and set variable for view!!
-                console.log("resolve mercury:");
-                console.log(callback);
-                $scope.totalResults = callback.data.response.numFound;
-                $scope.searchOfferResult = callback.data.response.docs;
-                $scope.totalPages = Math.ceil($scope.totalResults / $scope.pageSize);
+var facetFilter = [];
+Mercury.search({
+        'q.op': 'AND',
+        rows: $scope.pageSize,
+        //start : (($scope.currentPage) ? ($scope.currentPage-1) : 0) * $scope.pageSize,
+        start : (($routeParams.pag) ? $routeParams.pag : ($scope.currentPage) ? ($scope.currentPage-1) : 0) * $scope.pageSize,
+        fq: facetFilter, //is array..
+        fl: '*, score',
+        q: $scope.searchCarrousel ? $scope.searchCarrousel : ($scope.search) ? $scope.search: ($routeParams.search)? $routeParams.search : '*',
+        pt: (UserLocalService.getLocation()) ? UserLocalService.getLocation().lat + "," + UserLocalService.getLocation().lon : '',
+        facet: true,
+        'facet.field' : ['paisF', 'provinciaF', 'categoriaF', 'subcategoriaF', 'origen'],
+        'facet.limit' : 4,
+        'facet.mincount' : 1,
+        'f.topics.facet.limit' : 50
 
-            }, function(err){ // error for promise!!
-                console.log(err);
-            });
+    })
+    .then(function (callback){
+
+        angular.forEach(callback.data.facet_counts.facet_fields, function(value, key){
+            $scope.objectedItems[key] = [];
+            for(var i = 0; i < value.length; i++)
+                if (i%2 == 0) $scope.objectedItems[key].push({ facet: value[i], count: value[i+1] });
+
+        });
+
+        $scope.totalResults = callback.data.response.numFound;
+        $scope.searchOfferResult = callback.data.response.docs;
+        $scope.totalPages = Math.ceil($scope.totalResults / $scope.pageSize);
+
+    }, function(err){
+        console.log(err);
+    });
 ```
 
 is easy! :D
 
 ##TODO:
 * Parse to Angular 2
-* Insert PUT and DELETE method for Solr files
-* Add multiple endpoints to cores
-* Doc man for the directive HTML
+* Caching with $cacheFactory for history calls or others features
+* Insert PUT and DELETE and more features for Solr files
+* Add multiple end-points to cores
+* Make and documented manual for the directive in HTML
 
 ###Licence:
 Open source
