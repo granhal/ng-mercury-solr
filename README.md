@@ -35,61 +35,19 @@ yourApp.controller('searchCtrl', ['Mercury',
 	}
 ]);
 ```
-#### In "//your code here" inside the method, insert:
+#### In "//your code here" inside the method, insert, for example:
 ```javascript
-var facetFilter = [];
-$scope.doSearchApply = function(facet, value) { /* facet key and value */
-    if(facet && value){
-        if(facet[0] != '-' ){
-            if(facetFilter.indexOf("-" + facet + ':' + value) != -1)
-                facetFilter[facetFilter.indexOf("-" + facet + ':' + value)] = facet + ':' + value;
-            else
-                facetFilter.push(facet + ':' + value);
-        } else {
-            if (facetFilter.indexOf(facet + ':' + value) == -1)
-                facetFilter[facetFilter.indexOf(facet.substring(1, facet.length) + ':' + value)] = facet + ':' + value;
-            else
-                facetFilter.push(facet + ':' + value);
-        }
-
-        angular.forEach(facetFilter, function(val,key){
-            if(key != 0){
-                if(facet[0] == "-")
-                    $location.search(facet.substring(1, facet.length), null);
-                else
-                    $location.search("-"+facet, null);
-
-                $location.url($location.$$url + '&' + facet + '=' + value);
-                $window.history.replaceState(facetFilter[facet], 'historyFacets', $location.absUrl());
-            }
-        });
-    }
-
     Mercury.search({
-            'q.op': 'AND',
-            rows: $scope.pageSize,
-            //start : (($scope.currentPage) ? ($scope.currentPage-1) : 0) * $scope.pageSize,
-            start : (($routeParams.pag) ? $routeParams.pag : ($scope.currentPage) ? ($scope.currentPage-1) : 0) * $scope.pageSize,
-            fq: facetFilter,
-            fl: '*, score',
-            q: $scope.searchCarrousel ? $scope.searchCarrousel : ($scope.search) ? $scope.search: ($routeParams.search)? $routeParams.search : '*',
-            pt: (UserLocalService.getLocation()) ? UserLocalService.getLocation().lat + "," + UserLocalService.getLocation().lon : '',
-            facet: true,
-            'facet.field' : ['paisF', 'provinciaF', 'categoriaF', 'subcategoriaF', 'origen'],
-            'facet.limit' : 4,
-            'facet.mincount' : 1,
-            'f.topics.facet.limit' : 50
-
+	    'q.op': 'AND',
+	    rows: $scope.pageSize,
+	    start : ((pag) ? pag : 0) * $scope.pageSize,
+	    q: ($scope.search) ? $scope.search :  "*" ,
+	    facet: true,
+	    'facet.limit' : 4,
+	    'facet.mincount' : 1,
+	    'f.topics.facet.limit' : 50
         })
         .then(function (callback){
-
-            angular.forEach(callback.data.facet_counts.facet_fields, function(value, key){
-                $scope.objectedItems[key] = [];
-                for(var i = 0; i < value.length; i++)
-                    if (i%2 == 0) $scope.objectedItems[key].push({ facet: value[i], count: value[i+1] });
-
-            });
-
             $scope.totalResults = callback.data.response.numFound;
             $scope.searchOfferResult = callback.data.response.docs;
             $scope.totalPages = Math.ceil($scope.totalResults / $scope.pageSize);
